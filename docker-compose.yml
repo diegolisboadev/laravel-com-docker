@@ -1,0 +1,29 @@
+version: '3' # Versão dos Containers
+
+services: # Criar uma instância com serviços a serem rodados no Docker
+  handson:
+    build: . # Buil o serviço handson setando a pasta local
+    ports:
+      - "8383:80"
+    volumes: # Volume local onde ficará os arquivos do Laravel (pasta_local para a pasta do servidor_web)
+      - ./:/usr/share/nginx
+    networks: # Aqui eu especifico qual rede esse serviço vai utilizar
+      - handson-network
+
+  mysql-handson: # Serviço do MySQL a ser instanciado no Docker/Container
+    image: mysql:5.7.32
+    ports: # Define uma porta padrão local para o MySQL (port_local:port_container)
+      - "3310:3306"
+    volumes: # Guardar os dados (databases/registro) do SGBD
+      - ./db_data/data/mysql:/var/lib/mysql
+    environment: # Variaveis de Ambiente do MySQL
+      MYSQL_DATABASE: 4linux
+      MYSQL_ROOT_PASSWORD: root
+    networks: # Aqui eu especifico qual rede esse serviço vai utilizar
+      - handson-network
+
+# Criar uma rede para conexão entre os containers
+networks:
+  handson-network:
+    driver: bridge
+
